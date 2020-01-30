@@ -3,29 +3,37 @@ import axios from "axios";
 
 import AuthContext from "../contexts/AuthContext";
 
+const DEFAULT_BASE_URL = "http://localhost:8000/api/";
+
 const useApi = baseURL => {
-  const { authToken, updateToken } = useContext(AuthContext);
+  const { authToken } = useContext(AuthContext);
+  console.log({ authToken });
 
   const api = useMemo(() => {
     const apiItem = axios.create({
-      baseURL: baseURL || process.env.REACT_APP_API_BASE_URL
+      baseURL: baseURL || DEFAULT_BASE_URL,
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        Accept: "application/json"
+      }
     });
 
     apiItem.interceptors.request.use(async config => {
       const user = {}; // function to get user data.
 
-      if (user) {
-        // eslint-disable-next-line no-param-reassign
-        config.headers = {
-          Authorization: updatedAuthToken
-        };
-      }
+      // if (user) {
+      // eslint-disable-next-line no-param-reassign
+      config.headers = {
+        Authorization: `Bearer ${authToken}`,
+        Accept: "application/json"
+      };
+      // }
 
       return config;
     });
 
     return apiItem;
-  }, [baseURL, authToken, updateToken]);
+  }, [baseURL, authToken]);
 
   return api;
 };

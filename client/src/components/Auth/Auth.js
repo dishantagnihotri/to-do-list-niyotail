@@ -17,7 +17,8 @@ class Auth extends React.Component {
 
   state = {
     verifyingAuth: true,
-    authToken: null,
+    authToken:
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0IiwianRpIjoiNDhmMDRiNWU2NmVjZWYzNDJlMTc3NWIzMDUzMWYwOTQzYWQ4MjA5MzY5NDgyYjdiYjUyZDAyYTY2OGNiNDEyNDJlYmFhNzdiMmNjYjY0NDUiLCJpYXQiOjE1ODAzODgwMjksIm5iZiI6MTU4MDM4ODAyOSwiZXhwIjoxNjEyMDEwNDI5LCJzdWIiOiIxMCIsInNjb3BlcyI6W119.GpHtIYiBnUADTSDszx8Vcvpk5D_OMpO51khMhRQZ6a3GzjiqZtbMLU8O1XWmalv6zS0YgLfngZWUSwESqyZC2d7fL1ngP7ba6SnAWTFQDZ0BNseoo2IYFJzE9HXV-Gfe8_SrW53TqGA6yu1bYUzdroodzP9g4LmWG4JiXOe1SfvcyKbhQKcXvCELZyv7yfbFMj0QKVQ6_SAU13hbp5BY_7SO5kF_YCNxbiVaS7E2q0yrtnehPtHfzo6eaYDVttI9QgpUWc_LzIQFwoiGsMpKN6WO5Nob77hazhiJ4-neMDziKQ3a1wFAglG-JeOPjKal8zi6CZYTyPPRW240wyJBB5m2LOq4XFI5dNcsm2vkkxY48y8GATuV6DFZOW3tRY8N_JdBlcmDy5xIyAM1Ugg02hML-uDm8gmLBlczqf-0pRmWhldntKTRWsNAnF7xzDA3K_Ar66hoUm8Qp__UwSwM5ufiFAEYyn7pPOLT7e2pgFCQTFQNdGe2kNF6b3mmMdZ58dshe-D3QRpb9tCmbbIMAw47JzVztWsMdrNA0L2JiOP3WV5-TkGxIXedgpIPCSeLwgZNn8G4rs0BzuwK7zGAjQF5hZRRPDO8MM5vOEccxbtV6nVDuLw5US9ia-G0Ov1uPkqGAs1RkCzwUW9Q6rIl7tWaCCJspmt8lVgNca78qJU",
     user: null,
     userInfo: null,
     loadingUserInfo: null
@@ -28,7 +29,8 @@ class Auth extends React.Component {
       //   const user = await Authenticator.currentAuthenticatedUser();
       let user = {
         user: "ads",
-        authToken: "something"
+        authToken:
+          "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0IiwianRpIjoiNDhmMDRiNWU2NmVjZWYzNDJlMTc3NWIzMDUzMWYwOTQzYWQ4MjA5MzY5NDgyYjdiYjUyZDAyYTY2OGNiNDEyNDJlYmFhNzdiMmNjYjY0NDUiLCJpYXQiOjE1ODAzODgwMjksIm5iZiI6MTU4MDM4ODAyOSwiZXhwIjoxNjEyMDEwNDI5LCJzdWIiOiIxMCIsInNjb3BlcyI6W119.GpHtIYiBnUADTSDszx8Vcvpk5D_OMpO51khMhRQZ6a3GzjiqZtbMLU8O1XWmalv6zS0YgLfngZWUSwESqyZC2d7fL1ngP7ba6SnAWTFQDZ0BNseoo2IYFJzE9HXV-Gfe8_SrW53TqGA6yu1bYUzdroodzP9g4LmWG4JiXOe1SfvcyKbhQKcXvCELZyv7yfbFMj0QKVQ6_SAU13hbp5BY_7SO5kF_YCNxbiVaS7E2q0yrtnehPtHfzo6eaYDVttI9QgpUWc_LzIQFwoiGsMpKN6WO5Nob77hazhiJ4-neMDziKQ3a1wFAglG-JeOPjKal8zi6CZYTyPPRW240wyJBB5m2LOq4XFI5dNcsm2vkkxY48y8GATuV6DFZOW3tRY8N_JdBlcmDy5xIyAM1Ugg02hML-uDm8gmLBlczqf-0pRmWhldntKTRWsNAnF7xzDA3K_Ar66hoUm8Qp__UwSwM5ufiFAEYyn7pPOLT7e2pgFCQTFQNdGe2kNF6b3mmMdZ58dshe-D3QRpb9tCmbbIMAw47JzVztWsMdrNA0L2JiOP3WV5-TkGxIXedgpIPCSeLwgZNn8G4rs0BzuwK7zGAjQF5hZRRPDO8MM5vOEccxbtV6nVDuLw5US9ia-G0Ov1uPkqGAs1RkCzwUW9Q6rIl7tWaCCJspmt8lVgNca78qJU"
       };
 
       if (user) {
