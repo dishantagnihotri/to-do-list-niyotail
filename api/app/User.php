@@ -38,4 +38,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the List associated with user.
+     */
+    public function lists()
+    {
+        return $this->hasMany('App\Lists');
+    }
 }
+

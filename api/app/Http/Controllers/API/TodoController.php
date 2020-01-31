@@ -18,7 +18,6 @@ class TodoController extends BaseController
     {
         $products = Todo::all();
 
-
         return $this->sendResponse($products->toArray(), 'Products retrieved successfully.');
     }
 
@@ -35,10 +34,13 @@ class TodoController extends BaseController
 
 
         $validator = Validator::make($input, [
-            'name' => 'required',
-            'detail' => 'required'
+            'title' => 'required',
+            'description' => 'required',
+            'isDone' => 'required',
+            'lists_id' => 'required',
         ]);
 
+        // return $input;
 
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
@@ -83,10 +85,9 @@ class TodoController extends BaseController
     {
         $input = $request->all();
 
-
         $validator = Validator::make($input, [
-            'name' => 'required',
-            'detail' => 'required'
+            'title' => 'required',
+            'lists_id' => 'required'
         ]);
 
 
@@ -95,9 +96,11 @@ class TodoController extends BaseController
         }
 
 
-        $product->name = $input['name'];
-        $product->detail = $input['detail'];
-        $product->save();
+        $product->title = $input['title'];
+        $product->description = $input['description'];
+        $product->isDone = $input['isDone'];
+        $product->lists_id = $input['lists_id'];
+        $product->update();
 
 
         return $this->sendResponse($product->toArray(), 'Product updated successfully.');

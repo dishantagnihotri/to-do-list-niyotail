@@ -18,8 +18,8 @@ class CreateTodosTable extends Migration
             $table->string('title')->nullable();
             $table->text('description')->nullable();
             $table->boolean('isDone')->default(0);
-            $table->integer('list_id')->unsigned();
-            $table->foreign('list_id')->references('id')->on('lists');
+            $table->integer('lists_id')->unsigned();
+            $table->foreign('lists_id')->references('id')->on('lists');
             $table->timestamps();
         });
     }
@@ -31,9 +31,9 @@ class CreateTodosTable extends Migration
      */
     public function down()
     {
-        $table->dropForeign('lists_list_id_foreign');
-        $table->dropIndex('lists_list_id_index');
-        $table->dropColumn('list_id');
+        $table->dropForeign('lists_lists_id_foreign');
+        $table->dropIndex('lists_lists_id_index');
+        $table->dropColumn('lists_id');
         Schema::dropIfExists('todos');
     }
 }

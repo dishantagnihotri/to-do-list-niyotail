@@ -12,6 +12,14 @@ class Todo extends Model
      * @var array
      */
     protected $fillable = [
-        'title', 'isDone', 'list_id'
+        'title', 'description', 'isDone', 'lists_id'
     ];
+
+    /**
+     * Get the To do associated with a list.
+     */
+    public function list ()
+    {
+        return $this->hasOne('App\Lists');
+    }
 }

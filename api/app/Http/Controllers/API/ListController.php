@@ -16,8 +16,7 @@ class ListController extends BaseController
      */
     public function index()
     {
-        $products = Lists::all();
-
+        $products = Lists::with('todos')->get();
 
         return $this->sendResponse($products->toArray(), 'Products retrieved successfully.');
     }

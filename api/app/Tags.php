@@ -14,4 +14,13 @@ class Tags extends Model
     protected $fillable = [
         'name', 'color'
     ];
+
+
+    /**
+     * Get the List associated with a tag.
+     */
+    public function lists ()
+    {
+        return $this->belongsToMany('App\Lists');
+    }
 }

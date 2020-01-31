@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Card from "@material-ui/core/Card";
@@ -9,8 +9,9 @@ import Avatar from "@material-ui/core/Avatar";
 import { red } from "@material-ui/core/colors";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import IconButton from "@material-ui/core/IconButton";
-
-import ToDo from "../ToDo/ToDo";
+import DeleteSweepIcon from "@material-ui/icons/DeleteSweep";
+import ListsContext from "../../contexts/ListsContext";
+import ToDo from "../../components/ToDo";
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -35,8 +36,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const List = ({ title, updated_at }) => {
+const List = ({ list }) => {
+  console.log("init list - ", list);
   const classes = useStyles();
+  const { deleteLists } = useContext(ListsContext);
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
@@ -46,42 +49,41 @@ const List = ({ title, updated_at }) => {
   return (
     <Card className={classes.card}>
       <CardHeader
-        onClick={handleExpandClick}
-        style={{
-          cursor: "pointer"
-        }}
         avatar={
           <Avatar aria-label="recipe" className={classes.avatar}>
             R
           </Avatar>
         }
         action={
-          <IconButton
-            className={clsx(classes.expand, {
-              [classes.expandOpen]: expanded
-            })}
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="show more"
-          >
-            <ExpandMoreIcon />
-          </IconButton>
+          <React.Fragment>
+            <IconButton
+              aria-label="show more"
+              onClick={() => deleteLists(list)}
+            >
+              <DeleteSweepIcon />
+            </IconButton>
+
+            <IconButton
+              className={clsx(classes.expand, {
+                [classes.expandOpen]: expanded
+              })}
+              onClick={handleExpandClick}
+              aria-expanded={expanded}
+              aria-label="show more"
+            >
+              <ExpandMoreIcon />
+            </IconButton>
+          </React.Fragment>
         }
-        title={title}
-        subheader={updated_at}
+        title={list.title}
+        subheader={list.updated_at}
       />
-      <CardContent>
-        <ToDo />
-      </CardContent>
-      {/*       
+
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography paragraph>
-            Heat 1/2 cup of the broth in a pot until simmering, add saffron and
-            set aside for 10 minutes.
-          </Typography>
+          <ToDo todos={list.todos} />
         </CardContent>
-      </Collapse> */}
+      </Collapse>
     </Card>
   );
 };
