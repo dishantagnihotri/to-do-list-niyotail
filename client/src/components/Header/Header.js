@@ -9,7 +9,6 @@ import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
-import CreateNewList from "../CreateNewList";
 
 const useStyles = makeStyles(theme => ({
   grow: {
@@ -76,12 +75,6 @@ const useStyles = makeStyles(theme => ({
 const Header = () => {
   const classes = useStyles();
 
-  const [isCreateNewListOpen, setIsCreateNewListOpen] = useState(false);
-
-  const toggleCreateNew = () => {
-    setIsCreateNewListOpen(!isCreateNewListOpen);
-  };
-
   return (
     <React.Fragment>
       <div className={classes.grow}>
@@ -117,14 +110,6 @@ const Header = () => {
             <div className={classes.grow} />
 
             <div className={classes.sectionDesktop}>
-              <IconButton
-                aria-label="show 17 new notifications"
-                color="inherit"
-                onClick={toggleCreateNew}
-              >
-                <AddCircleOutlineIcon />
-              </IconButton>
-
               <IconButton aria-label="account of current user" color="inherit">
                 <AccountCircle />
               </IconButton>
@@ -132,11 +117,6 @@ const Header = () => {
           </Toolbar>
         </AppBar>
       </div>
-
-      <CreateNewList
-        isOpen={isCreateNewListOpen}
-        toggleOpen={toggleCreateNew}
-      />
     </React.Fragment>
   );
 };

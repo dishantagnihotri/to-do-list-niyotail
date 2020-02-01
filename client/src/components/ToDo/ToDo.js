@@ -135,22 +135,25 @@ const ToDo = ({ todos }) => {
     <List className={classes.checkboxList}>
       {(() => {
         if (todos.length) {
-          return todos.map(value => {
-            return (
-              <ListItem key={value.id} dense>
-                <ListItemIcon>
-                  <Checkbox
-                    edge="start"
-                    checked={value.isDone}
-                    disableRipple
-                    onClick={handleToggle(value)}
-                  />
-                </ListItemIcon>
+          return todos
+            .slice(0)
+            .reverse()
+            .map(value => {
+              return (
+                <ListItem key={value.id} dense>
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      checked={value.isDone}
+                      disableRipple
+                      onClick={handleToggle(value)}
+                    />
+                  </ListItemIcon>
 
-                <ListCustomAction todo={value} />
-              </ListItem>
-            );
-          });
+                  <ListCustomAction todo={value} />
+                </ListItem>
+              );
+            });
         } else {
           return "No list data,";
         }

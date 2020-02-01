@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
+import styled from "styled-components";
+
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Card from "@material-ui/core/Card";
@@ -12,33 +14,10 @@ import IconButton from "@material-ui/core/IconButton";
 import DeleteSweepIcon from "@material-ui/icons/DeleteSweep";
 import ListsContext from "../../contexts/ListsContext";
 import ToDo from "../../components/ToDo";
-
-const useStyles = makeStyles(theme => ({
-  card: {
-    width: "100%"
-  },
-  media: {
-    height: 0,
-    paddingTop: "56.25%" // 16:9
-  },
-  expand: {
-    transform: "rotate(0deg)",
-    marginLeft: "auto",
-    transition: theme.transitions.create("transform", {
-      duration: theme.transitions.duration.shortest
-    })
-  },
-  expandOpen: {
-    transform: "rotate(180deg)"
-  },
-  avatar: {
-    backgroundColor: red[500]
-  }
-}));
+import Divider from "@material-ui/core/Divider";
 
 const List = ({ list }) => {
   console.log("init list - ", list);
-  const classes = useStyles();
   const { deleteLists } = useContext(ListsContext);
   const [expanded, setExpanded] = React.useState(false);
 
@@ -47,13 +26,9 @@ const List = ({ list }) => {
   };
 
   return (
-    <Card className={classes.card}>
+    <StyledCard square borderColor={list.color}>
       <CardHeader
-        avatar={
-          <Avatar aria-label="recipe" className={classes.avatar}>
-            R
-          </Avatar>
-        }
+        avatar={<Avatar aria-label="recipe">R</Avatar>}
         action={
           <React.Fragment>
             <IconButton
@@ -63,15 +38,8 @@ const List = ({ list }) => {
               <DeleteSweepIcon />
             </IconButton>
 
-            <IconButton
-              className={clsx(classes.expand, {
-                [classes.expandOpen]: expanded
-              })}
-              onClick={handleExpandClick}
-              aria-expanded={expanded}
-              aria-label="show more"
-            >
-              <ExpandMoreIcon />
+            <IconButton onClick={handleExpandClick}>
+              <StyledExpandMoreIcon expanded={expanded} />
             </IconButton>
           </React.Fragment>
         }
@@ -80,11 +48,34 @@ const List = ({ list }) => {
       />
 
       <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <Divider />
+
         <CardContent>
           <ToDo todos={list.todos} />
         </CardContent>
       </Collapse>
-    </Card>
+      <Divider />
+    </StyledCard>
   );
 };
 export default List;
+
+const StyledCard = styled(Card)`
+  width: 100%;
+  border: 0;
+  border-left: 3px solid ${props => props.borderColor};
+`;
+
+const StyledExpandMoreIcon = styled(ExpandMoreIcon)`
+  ${props => {
+    if (props.expanded) {
+      return `
+        transform: rotate(180deg);
+      `;
+    } else {
+      return `
+        tranform: rotate(0deg);
+      `;
+    }
+  }};
+`;
