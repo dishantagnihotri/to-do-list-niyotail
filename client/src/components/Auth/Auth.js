@@ -33,7 +33,6 @@ class Auth extends React.Component {
   }
 
   signIn = async ({ email, password }) => {
-    console.log(process.env);
     try {
       const api = axios.create({
         baseURL: process.env.REACT_APP_AUTH_BASE_URL

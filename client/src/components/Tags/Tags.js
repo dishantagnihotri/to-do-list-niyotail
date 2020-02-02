@@ -31,7 +31,7 @@ const Tags = ({ todos_id, isEditingTodo }) => {
   // };
 
   const handleAddTags = tag => {
-    console.log(tag);
+    // console.log(tag);
     // try {
     // const response = await api.post(`lists`, mappedData);
 
