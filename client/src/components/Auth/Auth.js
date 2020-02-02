@@ -1,7 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
+import { withRouter, Redirect } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 import AuthContext from "../../contexts/AuthContext";
 
@@ -21,24 +22,14 @@ class Auth extends React.Component {
     this.signIn = this.signIn.bind(this);
     this.register = this.register.bind(this);
     this.signOut = this.signOut.bind(this);
+    this.redirectIfAuthenticated = this.redirectIfAuthenticated.bind(this);
+    this.redirectIfNotAuthenticated = this.redirectIfNotAuthenticated.bind(
+      this
+    );
   }
 
   componentDidMount() {
-    const authState = localStorage["auth"];
-
-    if (authState) {
-      const auth = JSON.parse(authState);
-
-      if (auth && auth.isLoggedIn) {
-        this.setState({
-          auth: {
-            authToken: auth.authToken,
-            isLoggedIn: auth.isLoggedIn
-          }
-        });
-      }
-      // - Validate Auth Token.
-    }
+    if (!this.state.auth) this.redirectIfAuthenticated();
   }
 
   signIn = async ({ email, password }) => {
@@ -51,23 +42,27 @@ class Auth extends React.Component {
         username: email,
         password,
         grant_type: "password",
-        client_id: 2,
-        client_secret: "Godsqrfgs2HwAwgutBx5Exd9DNfkd6Pw3BjHCdkV"
+        client_id: 3,
+        client_secret: "VmM2VtTkMzCXn3GMogvTpNn1hBgb4GlHFr7fIK1N"
       });
 
       if (response.access_token) {
-        let auth = {
-          authToken: response.access_token,
-          isLoggedIn: true
-        };
+        this.setState(prevState => {
+          return {
+            ...prevState,
+            auth: {
+              authToken: response.access_token,
+              isLoggedIn: true
+            }
+          };
+        });
 
-        localStorage["auth"] = JSON.stringify(auth);
+        toast.info("Welcome Back to your account.");
 
-        this.setState(auth);
         this.props.history.push(`/dashboard`);
       }
     } catch (error) {
-      console.log({ error });
+      toast.error("Something is not right. Do you have an account?");
     }
   };
 
@@ -80,19 +75,21 @@ class Auth extends React.Component {
       const { data: response } = await api.post(`register`, user);
 
       if (response.success === true) {
-        let auth = {
-          authToken: response.data.token,
-          user: response.data.user,
-          isLoggedIn: true
-        };
+        this.setState({
+          auth: {
+            authToken: response.access_token,
+            isLoggedIn: true
+          }
+        });
 
-        localStorage["auth"] = JSON.stringify(auth);
+        toast.info("Account created successfully.");
 
-        this.setState(auth);
-        this.props.history.push(`/dashboard`);
+        this.props.history.push("/dashboard");
       }
     } catch (error) {
-      console.log({ error });
+      toast.error(
+        "We are unable to create your account. Please try different email address."
+      );
     }
   };
 
@@ -101,14 +98,14 @@ class Auth extends React.Component {
       auth: null
     });
 
-    localStorage.clear();
+    toast.info("You are now logged out from your account.");
   };
 
-  redirectIfNotAuthenticated = () => {
-    if (!this.state.auth) {
-      window.location = "/login";
-    }
-  };
+  redirectIfNotAuthenticated = () =>
+    !this.state.auth && this.props.history.push("/login");
+
+  redirectIfAuthenticated = () =>
+    this.state.auth && this.props.history.push("/dashboard");
 
   render() {
     return (
@@ -118,7 +115,8 @@ class Auth extends React.Component {
           register: this.register,
           signIn: this.signIn,
           signOut: this.signOut,
-          redirectIfNotAuthenticated: this.redirectIfNotAuthenticated
+          redirectIfNotAuthenticated: this.redirectIfNotAuthenticated,
+          redirectIfAuthenticated: this.redirectIfAuthenticated
         }}
       >
         {this.props.children}

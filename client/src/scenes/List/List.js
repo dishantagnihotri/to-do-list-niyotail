@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import {
   Card,
   CardHeader,
-  CardContent,
   Collapse,
   Avatar,
   IconButton,
@@ -17,18 +17,16 @@ import ListsContext from "../../contexts/ListsContext";
 import ToDo from "../../components/ToDo";
 
 const List = ({ list }) => {
-  console.log("init list - ", list);
-  const { deleteLists } = useContext(ListsContext);
   const [expanded, setExpanded] = React.useState(false);
 
-  const handleExpandClick = () => setExpanded(!expanded);
+  const { deleteLists } = useContext(ListsContext);
 
   return (
     <Grid container justify="space-between" alignItems="flex-start">
-      <Grid xs={11}>
+      <Grid item xs={11}>
         <StyledCard square bordercolor={list.color}>
           <StyledCardHeader
-            onClick={handleExpandClick}
+            onClick={() => setExpanded(!expanded)}
             avatar={
               <StyledAvatar aria-label="recipe" bgcolor={list.color}>
                 {list.title ? list.title.charAt(0) : "D"}
@@ -36,7 +34,10 @@ const List = ({ list }) => {
             }
             action={
               <React.Fragment>
-                <IconButton onClick={handleExpandClick} color="primary">
+                <IconButton
+                  onClick={() => setExpanded(!expanded)}
+                  color="primary"
+                >
                   <StyledExpandMoreIcon expanded={expanded} />
                 </IconButton>
               </React.Fragment>
@@ -48,9 +49,7 @@ const List = ({ list }) => {
           <Collapse in={expanded} timeout="auto" unmountOnExit>
             <Divider />
 
-            {/* <CardContent> */}
             <ToDo todos={list.todos} lists_id={list.id} />
-            {/* </CardContent> */}
           </Collapse>
           <Divider />
         </StyledCard>
@@ -63,6 +62,10 @@ const List = ({ list }) => {
       </StyledDeleteHolder>
     </Grid>
   );
+};
+
+List.propTypes = {
+  list: PropTypes.object.isRequired
 };
 
 export default List;

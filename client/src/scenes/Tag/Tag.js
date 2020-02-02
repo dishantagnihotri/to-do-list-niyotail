@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import {
   ListItem,
   ListItemIcon,
@@ -18,7 +19,7 @@ const Tag = ({ tag }) => {
   };
 
   return (
-    <ListItem role={undefined} dense button onClick={handleToggle(tag)}>
+    <ListItem dense button onClick={() => handleToggle(tag)}>
       <ListItemIcon>
         <Checkbox edge="start" checked={checked} tabIndex={-1} disableRipple />
       </ListItemIcon>
@@ -32,6 +33,10 @@ const Tag = ({ tag }) => {
       </ListItemSecondaryAction>
     </ListItem>
   );
+};
+
+Tag.propTypes = {
+  tag: PropTypes.string.isRequired
 };
 
 export default Tag;

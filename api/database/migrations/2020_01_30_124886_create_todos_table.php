@@ -19,7 +19,7 @@ class CreateTodosTable extends Migration
             $table->text('description')->nullable();
             $table->boolean('isDone')->default(0);
             $table->integer('lists_id')->unsigned();
-            $table->foreign('lists_id')->references('id')->on('lists');
+            $table->foreign('lists_id')->references('id')->on('lists')->onDelete('cascade');
             $table->timestamps();
         });
     }

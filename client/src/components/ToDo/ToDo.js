@@ -1,11 +1,11 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import {
   List,
   ListItem,
   ListItemIcon,
   ListItemSecondaryAction,
-  ListItemText,
   Checkbox,
   IconButton,
   TextField,
@@ -24,12 +24,9 @@ import Tags from "../../components/Tags";
 
 export const ListCustomAction = ({ todo }) => {
   const [isEditingTodo, setIsEditingTodo] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState(todo.title);
 
   const { deleteTodos, updateTodos } = useContext(ListsContext);
-
-  const deleteTodo = async value => await deleteTodos(value);
 
   const updateTodo = (event, value) => {
     event.preventDefault();
@@ -53,12 +50,10 @@ export const ListCustomAction = ({ todo }) => {
                 autoComplete="off"
                 onSubmit={event => updateTodo(event, todo)}
                 onBlur={event => updateTodo(event, todo)}
-                disabled={isLoading}
               >
                 <TextField
                   id="standard-basic"
                   label="Standard"
-                  disabled={isLoading}
                   onChange={event => setTitle(event.target.value)}
                   value={title}
                 />
@@ -68,23 +63,27 @@ export const ListCustomAction = ({ todo }) => {
 
           return <Typography variany="h6">{title}</Typography>;
         })()}
-
+        {/* 
         <TagsHolder>
           <Tags todos_id={todo.id} isEditingTodo={isEditingTodo} />
-        </TagsHolder>
+        </TagsHolder> */}
       </Content>
 
       <StyledListItemSecondaryAction>
-        <IconButton edge="end" onClick={event => setIsEditingTodo(true)}>
+        <IconButton edge="end" onClick={() => setIsEditingTodo(true)}>
           <EditIcon />
         </IconButton>
 
-        <IconButton edge="end" onClick={() => deleteTodo(todo)}>
+        <IconButton edge="end" onClick={() => deleteTodos(todo)}>
           <DeleteOutlineIcon />
         </IconButton>
       </StyledListItemSecondaryAction>
     </React.Fragment>
   );
+};
+
+ListCustomAction.propTypes = {
+  todo: PropTypes.object.isRequired
 };
 
 const ToDo = ({ todos, lists_id }) => {
@@ -94,22 +93,24 @@ const ToDo = ({ todos, lists_id }) => {
 
   const { updateTodos, addNewTodos } = useContext(ListsContext);
 
-  const handleToggle = value => () => {
+  const handleToggle = value => {
     value.isDone = !value.isDone;
     updateTodos(value);
   };
 
   const addNewTodo = async event => {
     event.preventDefault();
+
     setIsLoadingNewToDo(true);
 
-    if (newToDo && newToDo.length)
+    if (newToDo && newToDo.length) {
       addNewTodos({
         title: newToDo,
         lists_id,
         description: "something",
         isDone: 0
       });
+    }
 
     setNewToDo(null);
     setIsLoadingNewToDo(false);
@@ -147,9 +148,7 @@ const ToDo = ({ todos, lists_id }) => {
                     onChange={event => setNewToDo(event.target.value)}
                     value={newToDo}
                     autoFocus
-                    style={{
-                      width: "100%"
-                    }}
+                    fullWidth
                   />
                 </StyledForm>
               );
@@ -158,8 +157,8 @@ const ToDo = ({ todos, lists_id }) => {
             return (
               <React.Fragment>
                 <AlertTitle>
-                  These are your to-do's. You need to complete all task's to
-                  complete a task.
+                  These are your to-do's. You need to complete each and every
+                  task to complete the task.
                 </AlertTitle>
               </React.Fragment>
             );
@@ -183,7 +182,7 @@ const ToDo = ({ todos, lists_id }) => {
                       edge="start"
                       checked={value.isDone}
                       disableRipple
-                      onClick={handleToggle(value)}
+                      onClick={() => handleToggle(value)}
                     />
                   </ListItemIcon>
 
@@ -193,14 +192,26 @@ const ToDo = ({ todos, lists_id }) => {
             });
         } else {
           return (
-            <Alert severity="error" action={<Button>Add New To Do</Button>}>
-              This task doesn't have any to do. Creat a new one.
+            <Alert
+              severity="error"
+              action={
+                <Button onClick={() => setIsAddingNewToDo(!isAddingNewToDo)}>
+                  Add New To Do
+                </Button>
+              }
+            >
+              This task doesn't have any to do. You need to create one.
             </Alert>
           );
         }
       })()}
     </List>
   );
+};
+
+ToDo.propTypes = {
+  todo: PropTypes.object,
+  lists_id: PropTypes.number.isRequired
 };
 
 export default ToDo;

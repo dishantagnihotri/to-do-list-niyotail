@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import {
   Button,
@@ -12,7 +13,6 @@ import {
   Typography
 } from "@material-ui/core";
 
-import useApi from "../../hooks/useApi";
 import ListsContext from "../../contexts/ListsContext";
 
 const INITIAL_COLORS = ["#f44336", "#e91e63", "#9c27b0", "#1e88e5", "#009688"];
@@ -20,22 +20,18 @@ const INITIAL_COLORS = ["#f44336", "#e91e63", "#9c27b0", "#1e88e5", "#009688"];
 const CreateNewList = ({ isOpen, toggleOpen }) => {
   const [title, setTitle] = useState("");
   const [initialColor, setInitialColor] = useState("#f44336");
+
   const { addNewLists } = useContext(ListsContext);
 
-  const api = useApi();
-
   const createNewList = () => {
-    const list = {
+    addNewLists({
       title,
       color: initialColor,
       user_id: 1
-    };
-    addNewLists(list);
+    });
   };
 
-  const setNewColor = color => {
-    if (color !== initialColor) setInitialColor(color);
-  };
+  const setNewColor = color => color !== initialColor && setInitialColor(color);
 
   return (
     <Dialog
@@ -102,6 +98,11 @@ const CreateNewList = ({ isOpen, toggleOpen }) => {
       </DialogActions>
     </Dialog>
   );
+};
+
+CreateNewList.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  toogleOpen: PropTypes.func
 };
 
 export default CreateNewList;

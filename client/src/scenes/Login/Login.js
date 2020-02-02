@@ -1,34 +1,27 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Redirect, Route } from "react-router-dom";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import {
   Avatar,
   Button,
-  CssBaseline,
   TextField,
-  Link,
   Grid,
   Paper,
-  Typography,
-  Container
+  Typography
 } from "@material-ui/core";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 
 import AuthContext from "../../contexts/AuthContext";
 
 const Login = () => {
-  const { auth, signIn } = useContext(AuthContext);
+  const [email, setEmail] = useState("dishant@dishant.com");
+  const [password, setPassword] = useState("1234567890");
 
-  const [email, setEmail] = useState("d@d.ddd");
-  const [password, setPassword] = useState("123456");
+  const { auth, signIn, redirectIfAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
-    checkLogin();
+    redirectIfAuthenticated();
   }, [auth]);
-
-  const checkLogin = () => {
-    if (auth && auth.isLoggedIn) return <Redirect to="/dashboard" />;
-  };
 
   const handleSubmit = event => {
     event.preventDefault();
@@ -40,18 +33,17 @@ const Login = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-
+    <Container>
       <StyledPaper>
-        <Avatar>
+        <StyledAvatar>
           <LockOutlinedIcon />
-        </Avatar>
+        </StyledAvatar>
 
         <Typography component="h1" variant="h5">
-          Sign in
+          Login to Account
         </Typography>
-
+        <br />
+        <br />
         <form noValidate onSubmit={handleSubmit}>
           <TextField
             variant="outlined"
@@ -80,7 +72,7 @@ const Login = () => {
             onChange={event => setPassword(event.target.value)}
             value={password}
           />
-
+          <br />
           <Button
             type="submit"
             fullWidth
@@ -90,10 +82,11 @@ const Login = () => {
           >
             Sign In
           </Button>
-
+          <br />
+          <br />
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="/register" variant="body2">
+              <Link to={"/register"} variant="body2">
                 {"Don't have an account? Register."}
               </Link>
             </Grid>
@@ -106,6 +99,14 @@ const Login = () => {
 
 export default Login;
 
+const Container = styled.div`
+  width: auto;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+`;
+
 const StyledPaper = styled(Paper)`
   padding: 20px 40px;
   display: flex;
@@ -113,4 +114,9 @@ const StyledPaper = styled(Paper)`
   align-items: center;
   justify-content: center;
   width: 500px;
+`;
+
+const StyledAvatar = styled(Avatar)`
+  background-color: #1a73e8;
+  margin: 20px 0;
 `;

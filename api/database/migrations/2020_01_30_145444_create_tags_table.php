@@ -17,7 +17,7 @@ class CreateTagsTable extends Migration
             $table->increments('id');
             $table->string('name')->nullable();
             $table->integer('todos_id')->unsigned();
-            $table->foreign('todos_id')->references('id')->on('todos');
+            $table->foreign('todos_id')->references('id')->on('todos')->onDelete('cascade');
             $table->timestamps();
      });
     }

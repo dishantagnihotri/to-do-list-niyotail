@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 import { Grid, Fab, Typography, Button } from "@material-ui/core";
 import { toast } from "react-toastify";
@@ -7,6 +7,7 @@ import Alert from "@material-ui/lab/Alert";
 
 import CreateNewList from "../../components/CreateNewList";
 import ListsContext from "../../contexts/ListsContext";
+import AuthContext from "../../contexts/AuthContext";
 import useApi from "../../hooks/useApi";
 import List from "../../scenes/List";
 
@@ -17,24 +18,29 @@ const Lists = () => {
 
   const api = useApi();
 
+  const { auth } = useContext(AuthContext);
+
   useEffect(() => {
     getAllLists();
-  }, []);
+  }, [auth]);
 
   const toggleCreateNew = () => setIsCreateNewListOpen(!isCreateNewListOpen);
 
   const getAllLists = async () => {
     try {
       setIsListsLoading(true);
+
       const { data: response } = await api.get(`lists`);
 
       if (response && response.data.length) {
         setLists(response.data);
+
         toast.success("These are your latest updates.");
       }
     } catch (error) {
       console.log({ error });
-      toast.error("Unable to fetch updates.");
+
+      toast.error("Unable to fetch updates. Please login again.");
     } finally {
       setIsListsLoading(false);
     }
@@ -46,6 +52,7 @@ const Lists = () => {
       const { data: response } = await api.post(`lists`, list);
 
       if (response && response.data) {
+        response.data.todos = [];
         setLists(prevState => prevState.concat(response.data));
         toast.success("New task created.");
       }
@@ -101,7 +108,10 @@ const Lists = () => {
             if (list.id === todo.lists_id) {
               return {
                 ...list,
-                todos: list.todos.concat(response.data)
+                todos: [...list.todos, response.data]
+                // list.todos.length === 0
+                //   ? list.todos.concat(response.data)
+                //   : [response.data]
               };
             }
 
@@ -140,7 +150,7 @@ const Lists = () => {
           })
         );
 
-        toast.warn("To-do removed from warning");
+        toast.warn("To-do removed from task.");
       }
     } catch (error) {
       console.log({ error });
@@ -167,7 +177,7 @@ const Lists = () => {
                     };
                   }
 
-                  return todo;
+                  return value;
                 })
               };
             }
@@ -184,7 +194,11 @@ const Lists = () => {
   };
 
   if (isListsLoading) {
-    return "loading lists...";
+    return (
+      <StyledAlert severity="info">
+        Validating Data. Please wait for a moment...
+      </StyledAlert>
+    );
   }
 
   return (

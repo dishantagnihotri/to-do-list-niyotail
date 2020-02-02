@@ -5,7 +5,8 @@ const AuthContext = React.createContext({
   register: null,
   signIn: null,
   signOut: null,
-  redirectIfNotAuthenticated: null
+  redirectIfNotAuthenticated: null,
+  redirectIfAuthenticated: null
 });
 
 export default AuthContext;

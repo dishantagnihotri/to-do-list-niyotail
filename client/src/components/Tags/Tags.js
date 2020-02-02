@@ -4,11 +4,9 @@ import { Grid, List } from "@material-ui/core";
 import ChipInput from "material-ui-chip-input";
 
 import Tag from "../../scenes/Tag";
-import useApi from "../../hooks/useApi";
 
 const Tags = ({ todos_id, isEditingTodo }) => {
   const [tags, setTags] = useState([]);
-  const api = useApi();
 
   useEffect(() => {
     // getAllTagsAssociatedWithToDo();

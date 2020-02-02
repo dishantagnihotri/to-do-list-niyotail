@@ -1,8 +1,7 @@
 import React, { useContext, useEffect } from "react";
-import Grid from "@material-ui/core/Grid";
+import { Grid, Container } from "@material-ui/core";
 import styled from "styled-components";
-
-import Container from "@material-ui/core/Container";
+import Alert from "@material-ui/lab/Alert";
 
 import Header from "./../../components/Header";
 import Lists from "./../../components/Lists";
@@ -12,16 +11,15 @@ const Dashboard = () => {
   const { auth, redirectIfNotAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
-    checkLogin();
+    redirectIfNotAuthenticated();
   }, [auth]);
 
-  const checkLogin = () => {
-    console.log("dashboard state", auth);
-    if (!auth || !auth.accessToken) redirectIfNotAuthenticated();
-  };
-
-  if (!auth) {
-    return '<a href="/login">Login</a>';
+  if (!auth.auth) {
+    return (
+      <Alert severity="info">
+        You are not loggedIn. Redirecting to the login page.
+      </Alert>
+    );
   }
 
   return (

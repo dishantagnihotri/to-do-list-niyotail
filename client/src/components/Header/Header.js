@@ -1,17 +1,16 @@
 import React, { useState, useContext } from "react";
 import styled from "styled-components";
-
 import {
   AppBar,
   Toolbar,
   IconButton,
   Typography,
   Menu,
-  MenuItem,
-  Divider
+  MenuItem
 } from "@material-ui/core";
 import { AccountCircle } from "@material-ui/icons";
 import DnsIcon from "@material-ui/icons/Dns";
+
 import AuthContext from "../../contexts/AuthContext";
 
 const Header = () => {
@@ -20,15 +19,7 @@ const Header = () => {
 
   const { signOut } = useContext(AuthContext);
 
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLogout = () => signOut();
+  const handleClick = event => setAnchorEl(event.currentTarget);
 
   return (
     <StyledAppBar position="static">
@@ -57,14 +48,14 @@ const Header = () => {
             anchorEl={anchorEl}
             keepMounted
             open={open}
-            onClose={handleClose}
+            onClose={() => setAnchorEl(null)}
             PaperProps={{
               style: {
                 width: 200
               }
             }}
           >
-            <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+            <MenuItem onClick={() => signOut()}>Log Out</MenuItem>
           </Menu>
         </div>
       </Toolbar>
