@@ -185,7 +185,7 @@ const Lists = () => {
           })
         );
 
-        toast.success("ToDo updated.");
+        toast.success("To Do updated successfully.");
       }
     } catch (error) {
       console.log({ error });

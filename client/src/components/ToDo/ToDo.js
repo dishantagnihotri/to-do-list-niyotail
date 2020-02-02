@@ -20,7 +20,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import { Alert, AlertTitle } from "@material-ui/lab";
 
 import ListsContext from "../../contexts/ListsContext";
-import Tags from "../../components/Tags";
+// import Tags from "../../components/Tags";
 
 export const ListCustomAction = ({ todo }) => {
   const [isEditingTodo, setIsEditingTodo] = useState(false);
@@ -225,9 +225,9 @@ const Content = styled.div`
   width: 100%;
 `;
 
-const TagsHolder = styled.div`
-  padding: 10px 0;
-`;
+// const TagsHolder = styled.div`
+//   padding: 10px 0;
+// `;
 
 const StyledListItem = styled(ListItem)`
   align-items: flex-start;

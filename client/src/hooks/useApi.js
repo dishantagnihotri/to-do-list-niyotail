@@ -3,7 +3,7 @@ import axios from "axios";
 
 import AuthContext from "../contexts/AuthContext";
 
-const DEFAULT_BASE_URL = "http://localhost:8000/api/";
+const DEFAULT_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const useApi = baseURL => {
   const { auth } = useContext(AuthContext);
@@ -17,6 +17,7 @@ const useApi = baseURL => {
           Accept: "application/json"
         }
       });
+
       return apiItem;
     }
 

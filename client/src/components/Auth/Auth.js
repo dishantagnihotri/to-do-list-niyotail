@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { withRouter, Redirect } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -33,17 +33,18 @@ class Auth extends React.Component {
   }
 
   signIn = async ({ email, password }) => {
+    console.log(process.env);
     try {
       const api = axios.create({
-        baseURL: "http://localhost:8000/oauth/"
+        baseURL: process.env.REACT_APP_AUTH_BASE_URL
       });
 
       const { data: response } = await api.post(`token`, {
         username: email,
         password,
         grant_type: "password",
-        client_id: 3,
-        client_secret: "VmM2VtTkMzCXn3GMogvTpNn1hBgb4GlHFr7fIK1N"
+        client_id: process.env.REACT_APP_AUTH_CLIENT_ID,
+        client_secret: process.env.REACT_APP_AUTH_CLIENT_SECRET
       });
 
       if (response.access_token) {
@@ -69,7 +70,7 @@ class Auth extends React.Component {
   register = async user => {
     try {
       const api = axios.create({
-        baseURL: "http://localhost:8000/api/"
+        baseURL: process.env.REACT_APP_API_BASE_URL
       });
 
       const { data: response } = await api.post(`register`, user);
