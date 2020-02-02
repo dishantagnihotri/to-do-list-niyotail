@@ -21,7 +21,9 @@ Route::middleware('auth:api')->group( function () {
     Route::resource('lists', 'API\ListController');
     Route::resource('todos', 'API\TodoController');
     Route::resource('tags', 'API\TagsController');
-  
+
+    Route::get('todos/{id}/tags', 'API\TodoController@getAllTags');
+
     Route::get('/user', function (Request $request) {
         return $request->user();
     });

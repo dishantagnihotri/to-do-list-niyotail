@@ -1,48 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import clsx from "clsx";
-import Card from "@material-ui/core/Card";
-import CardHeader from "@material-ui/core/CardHeader";
-import CardContent from "@material-ui/core/CardContent";
-import Collapse from "@material-ui/core/Collapse";
-import Avatar from "@material-ui/core/Avatar";
-import { red } from "@material-ui/core/colors";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import IconButton from "@material-ui/core/IconButton";
+import styled from "styled-components";
+import { Grid, Fab, Typography, Button } from "@material-ui/core";
+import { toast } from "react-toastify";
+import AddIcon from "@material-ui/icons/Add";
+import Alert from "@material-ui/lab/Alert";
 
+import CreateNewList from "../../components/CreateNewList";
 import ListsContext from "../../contexts/ListsContext";
-import ToDo from "../ToDo/ToDo";
 import useApi from "../../hooks/useApi";
 import List from "../../scenes/List";
 
-const useStyles = makeStyles(theme => ({
-  card: {
-    width: "100%"
-  },
-  media: {
-    height: 0,
-    paddingTop: "56.25%" // 16:9
-  },
-  expand: {
-    transform: "rotate(0deg)",
-    marginLeft: "auto",
-    transition: theme.transitions.create("transform", {
-      duration: theme.transitions.duration.shortest
-    })
-  },
-  expandOpen: {
-    transform: "rotate(180deg)"
-  },
-  avatar: {
-    backgroundColor: red[500]
-  }
-}));
-
 const Lists = () => {
-  const classes = useStyles();
-
   const [isListsLoading, setIsListsLoading] = useState(true);
   const [lists, setLists] = useState([]);
+  const [isCreateNewListOpen, setIsCreateNewListOpen] = useState(false);
 
   const api = useApi();
 
@@ -50,49 +21,69 @@ const Lists = () => {
     getAllLists();
   }, []);
 
+  const toggleCreateNew = () => setIsCreateNewListOpen(!isCreateNewListOpen);
+
   const getAllLists = async () => {
     try {
       setIsListsLoading(true);
-      const response = await api.get(`lists`);
+      const { data: response } = await api.get(`lists`);
 
-      if (response.status === 200) {
-        if (response.data && response.data.data.length) {
-          console.log("list", response.data);
-          setLists(response.data.data);
-        }
+      if (response && response.data.length) {
+        setLists(response.data);
+        toast.success("These are your latest updates.");
       }
     } catch (error) {
       console.log({ error });
+      toast.error("Unable to fetch updates.");
     } finally {
-      // - Disable loader
-      console.log("disabling");
       setIsListsLoading(false);
-      console.log("disabled");
     }
   };
 
-  const addNewLists = value => {
-    console.log("adding", value);
-  };
-
-  const deleteLists = async value => {
-    console.log("deleting", value);
-
+  const addNewLists = async list => {
     try {
       setIsListsLoading(true);
-      const response = await api.delete(`lists/value.id`);
+      const { data: response } = await api.post(`lists`, list);
 
-      if (response.status === 200) {
-        console.log("list", response.data);
-        setLists(prevState => prevState.filter(list => list.id !== value.id));
+      if (response && response.data) {
+        setLists(prevState => prevState.concat(response.data));
+        toast.success("New task created.");
       }
     } catch (error) {
       console.log({ error });
+      toast.error(error.message);
+
+      if (error.data) {
+        error.data.forEach(err => {
+          toast.error(err[0]);
+        });
+      }
     } finally {
-      // - Disable loader
-      console.log("disabling");
+      setIsCreateNewListOpen(false);
       setIsListsLoading(false);
-      console.log("disabled");
+    }
+  };
+
+  const deleteLists = async id => {
+    try {
+      setIsListsLoading(true);
+      const { status } = await api.delete(`lists/${id}`);
+
+      if (status === 200) {
+        setLists(prevState => prevState.filter(list => list.id !== id));
+        toast.warn("Task Deleted");
+      }
+    } catch (error) {
+      console.log({ error });
+      toast.error(error.message);
+
+      if (error.data) {
+        error.data.forEach(err => {
+          toast.error(err[0]);
+        });
+      }
+    } finally {
+      setIsListsLoading(false);
     }
   };
 
@@ -100,78 +91,79 @@ const Lists = () => {
     console.log("updating", value);
   };
 
-  const addNewTodos = async (title, lists_id) => {
-    const mappedData = {
-      title,
-      description: "asd",
-      isDone: 0,
-      lists_id
-    };
-
+  const addNewTodos = async todo => {
     try {
-      const response = await api.post(`todos`, mappedData);
-      console.log(response);
+      const { data: response } = await api.post(`todos`, todo);
 
-      if (response.status === 200) {
-        // if (response.data && response.data.data.length) {
-        //   console.log("list", response.data);
-        //   setLists(response.data.data);
-        // }
-        // Update state/
-        return true;
-      }
-    } catch (error) {
-      console.log({ error });
-      return false;
-    }
-  };
-
-  const deleteTodos = async value => {
-    console.log("deleting", value);
-    try {
-      const response = await api.delete(`todos/${value.id}`);
-      console.log(response);
-
-      if (response.status === 200) {
+      if (response) {
         setLists(prevState =>
           prevState.map(list => {
-            if (list.id === value.lists_id) {
+            if (list.id === todo.lists_id) {
               return {
                 ...list,
-                todos: list.todos.filter(todo => todo.id !== value.id)
+                todos: list.todos.concat(response.data)
               };
             }
+
             return list;
           })
         );
-        return true;
+        toast.success("To do added!");
       }
     } catch (error) {
       console.log({ error });
-      return false;
+      toast.error(error.message);
+
+      if (error.data) {
+        error.data.forEach(err => {
+          toast.error(err[0]);
+        });
+      }
     }
   };
 
-  const updateTodos = async value => {
-    console.log("updating", value);
-
+  const deleteTodos = async todo => {
     try {
-      const response = await api.put(`todos/${value.id}`, value);
-      console.log(response);
+      const { status } = await api.delete(`todos/${todo.id}`);
 
-      if (response.status === 200) {
+      if (status === 200) {
         setLists(prevState =>
           prevState.map(list => {
-            if (list.id === value.lists_id) {
+            if (list.id === todo.lists_id) {
               return {
                 ...list,
-                todos: list.todos.map(todo => {
-                  if (todo.id === value.id) {
+                todos: list.todos.filter(value => value.id !== todo.id)
+              };
+            }
+
+            return list;
+          })
+        );
+
+        toast.warn("To-do removed from warning");
+      }
+    } catch (error) {
+      console.log({ error });
+    }
+  };
+
+  const updateTodos = async todo => {
+    try {
+      const { status } = await api.put(`todos/${todo.id}`, todo);
+
+      if (status === 200) {
+        setLists(prevState =>
+          prevState.map(list => {
+            if (list.id === todo.lists_id) {
+              return {
+                ...list,
+                todos: list.todos.map(value => {
+                  if (value.id === todo.id) {
                     return {
-                      ...todo,
-                      isDone: value.isDone,
-                      title: value.title,
-                      description: value.description
+                      ...value,
+                      isDone: todo.isDone,
+                      title: todo.title,
+                      description: todo.description
                     };
                   }
 
@@ -182,11 +174,12 @@ const Lists = () => {
             return list;
           })
         );
-        return true;
+
+        toast.success("ToDo updated.");
       }
     } catch (error) {
       console.log({ error });
-      return false;
+      toast.error("Unable to update. Try again!");
     }
   };
 
@@ -208,13 +201,82 @@ const Lists = () => {
       }}
     >
       <ListsContext.Consumer>
-        {value => {
-          if (value.lists && value.lists.length) {
-            return value.lists.map(list => <List list={list} />);
+        {state => {
+          if (state.lists) {
+            return (
+              <React.Fragment>
+                <Grid container justify="space-between" alignItems="center">
+                  <Grid container justify="flex-start" alignItems="center">
+                    <Fab
+                      color="primary"
+                      aria-label="edit"
+                      size="small"
+                      onClick={toggleCreateNew}
+                    >
+                      <AddIcon />
+                    </Fab>
+
+                    <HasGutters>
+                      <Typography variant="h5">Tasks</Typography>
+                      <Typography variant="body1">
+                        These are the task's. You can assign multiple to-do's
+                        with a task.
+                      </Typography>
+                    </HasGutters>
+                  </Grid>
+                </Grid>
+
+                <VerticalSpacer />
+
+                <CreateNewList
+                  isOpen={isCreateNewListOpen}
+                  toggleOpen={toggleCreateNew}
+                />
+
+                {(() => {
+                  if (state.lists.length)
+                    return state.lists.map(list => (
+                      <List key={list.id} list={list} />
+                    ));
+
+                  return (
+                    <StyledAlert
+                      severity="info"
+                      action={
+                        <Button
+                          color="primary"
+                          size="small"
+                          onClick={toggleCreateNew}
+                        >
+                          CREATE NEW TASK
+                        </Button>
+                      }
+                    >
+                      You don't have any task right now.
+                    </StyledAlert>
+                  );
+                })()}
+              </React.Fragment>
+            );
           }
         }}
       </ListsContext.Consumer>
     </ListsContext.Provider>
   );
 };
+
 export default Lists;
+
+const VerticalSpacer = styled.div`
+  height: 50px;
+  display: block;
+  width: 100%;
+`;
+
+const StyledAlert = styled(Alert)`
+  width: 100%;
+`;
+
+const HasGutters = styled.div`
+  margin-left: 20px;
+`;

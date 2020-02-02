@@ -1,69 +1,77 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
-
-import { makeStyles } from "@material-ui/core/styles";
-import clsx from "clsx";
-import Card from "@material-ui/core/Card";
-import CardHeader from "@material-ui/core/CardHeader";
-import CardContent from "@material-ui/core/CardContent";
-import Collapse from "@material-ui/core/Collapse";
-import Avatar from "@material-ui/core/Avatar";
-import { red } from "@material-ui/core/colors";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  Collapse,
+  Avatar,
+  IconButton,
+  Divider,
+  Grid
+} from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import IconButton from "@material-ui/core/IconButton";
 import DeleteSweepIcon from "@material-ui/icons/DeleteSweep";
+
 import ListsContext from "../../contexts/ListsContext";
 import ToDo from "../../components/ToDo";
-import Divider from "@material-ui/core/Divider";
 
 const List = ({ list }) => {
   console.log("init list - ", list);
   const { deleteLists } = useContext(ListsContext);
   const [expanded, setExpanded] = React.useState(false);
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
+  const handleExpandClick = () => setExpanded(!expanded);
 
   return (
-    <StyledCard square borderColor={list.color}>
-      <CardHeader
-        avatar={<Avatar aria-label="recipe">R</Avatar>}
-        action={
-          <React.Fragment>
-            <IconButton
-              aria-label="show more"
-              onClick={() => deleteLists(list)}
-            >
-              <DeleteSweepIcon />
-            </IconButton>
+    <Grid container justify="space-between" alignItems="flex-start">
+      <Grid xs={11}>
+        <StyledCard square bordercolor={list.color}>
+          <StyledCardHeader
+            onClick={handleExpandClick}
+            avatar={
+              <StyledAvatar aria-label="recipe" bgcolor={list.color}>
+                {list.title ? list.title.charAt(0) : "D"}
+              </StyledAvatar>
+            }
+            action={
+              <React.Fragment>
+                <IconButton onClick={handleExpandClick} color="primary">
+                  <StyledExpandMoreIcon expanded={expanded} />
+                </IconButton>
+              </React.Fragment>
+            }
+            title={list.title}
+            subheader={list.updated_at}
+          />
 
-            <IconButton onClick={handleExpandClick}>
-              <StyledExpandMoreIcon expanded={expanded} />
-            </IconButton>
-          </React.Fragment>
-        }
-        title={list.title}
-        subheader={list.updated_at}
-      />
+          <Collapse in={expanded} timeout="auto" unmountOnExit>
+            <Divider />
 
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <Divider />
+            {/* <CardContent> */}
+            <ToDo todos={list.todos} lists_id={list.id} />
+            {/* </CardContent> */}
+          </Collapse>
+          <Divider />
+        </StyledCard>
+      </Grid>
 
-        <CardContent>
-          <ToDo todos={list.todos} />
-        </CardContent>
-      </Collapse>
-      <Divider />
-    </StyledCard>
+      <StyledDeleteHolder>
+        <IconButton aria-label="show more" onClick={() => deleteLists(list.id)}>
+          <StyledDeleteSweepIcon />
+        </IconButton>
+      </StyledDeleteHolder>
+    </Grid>
   );
 };
+
 export default List;
 
 const StyledCard = styled(Card)`
   width: 100%;
-  border: 0;
-  border-left: 3px solid ${props => props.borderColor};
+  border: 1px solid #dadce0;
+  border-left: 3px solid ${props => props.bordercolor};
+  border-radius: 0;
 `;
 
 const StyledExpandMoreIcon = styled(ExpandMoreIcon)`
@@ -78,4 +86,21 @@ const StyledExpandMoreIcon = styled(ExpandMoreIcon)`
       `;
     }
   }};
+`;
+
+const StyledAvatar = styled(Avatar)`
+  background-color: ${props => props.bgcolor};
+  text-transform: uppercase;
+`;
+
+const StyledDeleteSweepIcon = styled(DeleteSweepIcon)`
+  color: #ff5252;
+`;
+
+const StyledCardHeader = styled(CardHeader)`
+  cursor: pointer;
+`;
+
+const StyledDeleteHolder = styled.div`
+  padding: 15px;
 `;

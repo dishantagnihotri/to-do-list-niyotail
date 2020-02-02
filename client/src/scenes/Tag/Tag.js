@@ -1,11 +1,12 @@
-import React, { useContext } from "react";
-import TagsContext from "../../contexts/TagsContext";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
-import Checkbox from "@material-ui/core/Checkbox";
-import IconButton from "@material-ui/core/IconButton";
+import React from "react";
+import {
+  ListItem,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText,
+  IconButton,
+  Checkbox
+} from "@material-ui/core";
 import CommentIcon from "@material-ui/icons/Comment";
 
 const Tag = ({ tag }) => {

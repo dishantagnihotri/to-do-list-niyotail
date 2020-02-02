@@ -1,119 +1,101 @@
-import React, { useState, useContext } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
-import Checkbox from "@material-ui/core/Checkbox";
-import IconButton from "@material-ui/core/IconButton";
-import CommentIcon from "@material-ui/icons/Comment";
-import TextField from "@material-ui/core/TextField";
-import EditIcon from "@material-ui/icons/Edit";
-import ListsContext from "../../contexts/ListsContext";
+import React, { useState, useContext, useEffect } from "react";
+import styled from "styled-components";
+import {
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText,
+  Checkbox,
+  IconButton,
+  TextField,
+  Fab,
+  Button,
+  Typography
+} from "@material-ui/core";
+import AddIcon from "@material-ui/icons/Add";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import CancelIcon from "@material-ui/icons/Cancel";
+import EditIcon from "@material-ui/icons/Edit";
+import { Alert, AlertTitle } from "@material-ui/lab";
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    width: "100%",
-    backgroundColor: theme.palette.background.paper
-  },
-  textArea: {
-    width: "70%"
-  }
-}));
+import ListsContext from "../../contexts/ListsContext";
+import Tags from "../../components/Tags";
 
 export const ListCustomAction = ({ todo }) => {
-  const classes = useStyles();
-
   const [isEditingTodo, setIsEditingTodo] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState(todo.title);
 
   const { deleteTodos, updateTodos } = useContext(ListsContext);
 
-  const deleteTodo = async value => {
-    const isNewTodoAdded = await deleteTodos(value);
-    console.log("returned delted value", isNewTodoAdded);
-  };
+  const deleteTodo = async value => await deleteTodos(value);
 
-  const updateTodo = async (event, value) => {
+  const updateTodo = (event, value) => {
     event.preventDefault();
-    const isTodoUpdated = await updateTodos({
+
+    updateTodos({
       ...value,
       title
     });
 
-    if (isTodoUpdated) {
-      setIsEditingTodo(false);
-    }
-    // show error
+    setIsEditingTodo(false);
   };
 
   return (
     <React.Fragment>
-      {(() => {
-        if (isEditingTodo) {
-          return (
-            <form
-              className={classes.root}
-              noValidate
-              autoComplete="off"
-              onSubmit={event => updateTodo(event, todo)}
-              onBlur={event => updateTodo(event, todo)}
-              disabled={isLoading}
-            >
-              <TextField
-                id="standard-basic"
-                label="Standard"
-                className={classes.textArea}
+      <Content>
+        {(() => {
+          if (isEditingTodo) {
+            return (
+              <form
+                noValidate
+                autoComplete="off"
+                onSubmit={event => updateTodo(event, todo)}
+                onBlur={event => updateTodo(event, todo)}
                 disabled={isLoading}
-                onChange={event => setTitle(event.target.value)}
-                value={title}
-              />
-            </form>
-          );
-        }
+              >
+                <TextField
+                  id="standard-basic"
+                  label="Standard"
+                  disabled={isLoading}
+                  onChange={event => setTitle(event.target.value)}
+                  value={title}
+                />
+              </form>
+            );
+          }
 
-        return <ListItemText primary={title} />;
-      })()}
+          return <Typography variany="h6">{title}</Typography>;
+        })()}
 
-      <ListItemSecondaryAction>
-        <IconButton
-          edge="end"
-          aria-label="comments"
-          onClick={event => setIsEditingTodo(true)}
-        >
+        <TagsHolder>
+          <Tags todos_id={todo.id} isEditingTodo={isEditingTodo} />
+        </TagsHolder>
+      </Content>
+
+      <StyledListItemSecondaryAction>
+        <IconButton edge="end" onClick={event => setIsEditingTodo(true)}>
           <EditIcon />
         </IconButton>
 
-        <IconButton
-          edge="end"
-          aria-label="comments"
-          onClick={() => deleteTodo(todo)}
-        >
+        <IconButton edge="end" onClick={() => deleteTodo(todo)}>
           <DeleteOutlineIcon />
         </IconButton>
-      </ListItemSecondaryAction>
+      </StyledListItemSecondaryAction>
     </React.Fragment>
   );
 };
 
-const ToDo = ({ todos }) => {
-  // need list id
-  const classes = useStyles();
-  const { updateTodos, addNewTodos } = useContext(ListsContext);
-
+const ToDo = ({ todos, lists_id }) => {
   const [isAddingNewToDo, setIsAddingNewToDo] = useState(false);
   const [isLoadingNewToDo, setIsLoadingNewToDo] = useState(false);
-
   const [newToDo, setNewToDo] = useState(null);
 
-  const handleToggle = value => () => {
-    console.log(" before", value);
+  const { updateTodos, addNewTodos } = useContext(ListsContext);
 
+  const handleToggle = value => () => {
     value.isDone = !value.isDone;
-    console.log("after", value);
     updateTodos(value);
   };
 
@@ -121,28 +103,83 @@ const ToDo = ({ todos }) => {
     event.preventDefault();
     setIsLoadingNewToDo(true);
 
-    if (newToDo && newToDo.length) {
-      const isNewTodoAdded = await addNewTodos(newToDo, 2);
-      // update list id.
+    if (newToDo && newToDo.length)
+      addNewTodos({
+        title: newToDo,
+        lists_id,
+        description: "something",
+        isDone: 0
+      });
 
-      if (isNewTodoAdded) {
-        setIsLoadingNewToDo(false);
-      }
-    }
+    setNewToDo(null);
+    setIsLoadingNewToDo(false);
+    setIsAddingNewToDo(false);
   };
 
   return (
-    <List className={classes.checkboxList}>
+    <List>
+      <ListItem>
+        <ListItemIcon>
+          <Fab
+            color="primary"
+            aria-label="edit"
+            size="small"
+            onClick={() => setIsAddingNewToDo(!isAddingNewToDo)}
+          >
+            {isAddingNewToDo ? <CancelIcon /> : <AddIcon />}
+          </Fab>
+        </ListItemIcon>
+
+        <StyledAlert severity="info">
+          {(() => {
+            if (isAddingNewToDo) {
+              return (
+                <StyledForm
+                  noValidate
+                  autoComplete="off"
+                  onSubmit={addNewTodo}
+                  disabled={isLoadingNewToDo}
+                >
+                  <TextField
+                    id="standard-basic"
+                    disableRipple={true}
+                    disabled={isLoadingNewToDo}
+                    onChange={event => setNewToDo(event.target.value)}
+                    value={newToDo}
+                    autoFocus
+                    style={{
+                      width: "100%"
+                    }}
+                  />
+                </StyledForm>
+              );
+            }
+
+            return (
+              <React.Fragment>
+                <AlertTitle>
+                  These are your to-do's. You need to complete all task's to
+                  complete a task.
+                </AlertTitle>
+              </React.Fragment>
+            );
+          })()}
+        </StyledAlert>
+      </ListItem>
+
+      <VerticalSpacer />
+
       {(() => {
-        if (todos.length) {
+        if (todos && todos.length) {
           return todos
             .slice(0)
             .reverse()
             .map(value => {
               return (
-                <ListItem key={value.id} dense>
+                <StyledListItem key={value.id}>
                   <ListItemIcon>
                     <Checkbox
+                      id={value.id}
                       edge="start"
                       checked={value.isDone}
                       disableRipple
@@ -151,48 +188,54 @@ const ToDo = ({ todos }) => {
                   </ListItemIcon>
 
                   <ListCustomAction todo={value} />
-                </ListItem>
+                </StyledListItem>
               );
             });
         } else {
-          return "No list data,";
-        }
-      })()}
-
-      {(() => {
-        if (isAddingNewToDo) {
           return (
-            <ListItem role={undefined} dense>
-              <form
-                className={classes.root}
-                noValidate
-                autoComplete="off"
-                onSubmit={addNewTodo}
-                disabled={isLoadingNewToDo}
-              >
-                <TextField
-                  id="outlined-basic"
-                  label="Outlined"
-                  variant="outlined"
-                  className={classes.textArea}
-                  disabled={isLoadingNewToDo}
-                  onChange={event => setNewToDo(event.target.value)}
-                  value={newToDo}
-                />
-              </form>
-            </ListItem>
+            <Alert severity="error" action={<Button>Add New To Do</Button>}>
+              This task doesn't have any to do. Creat a new one.
+            </Alert>
           );
         }
       })()}
-
-      <ListItem button onClick={() => setIsAddingNewToDo(true)}>
-        <ListItemIcon>
-          <CommentIcon />
-        </ListItemIcon>
-        <ListItemText primary="Add new todo" />
-      </ListItem>
     </List>
   );
 };
 
 export default ToDo;
+
+const VerticalSpacer = styled.div`
+  height: 30px;
+  width: 100%;
+`;
+
+const Content = styled.div`
+  width: 100%;
+`;
+
+const TagsHolder = styled.div`
+  padding: 10px 0;
+`;
+
+const StyledListItem = styled(ListItem)`
+  align-items: flex-start;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.9);
+  padding-top: 20px;
+  padding-left: 40px;
+  background-color: rgb(232, 244, 253);
+`;
+
+const StyledListItemSecondaryAction = styled(ListItemSecondaryAction)`
+  top: 30%;
+  right: 40px;
+`;
+
+const StyledAlert = styled(Alert)`
+  width: 100%;
+  padding: 6px 16px 0px 16px;
+`;
+
+const StyledForm = styled.form`
+  width: 100%;
+`;

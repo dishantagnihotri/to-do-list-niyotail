@@ -30,9 +30,9 @@ class CreateListsTable extends Migration
      */
     public function down()
     {
-        $table->dropForeign('lists_user_id_foreign');
-        $table->dropIndex('lists_user_id_index');
-        $table->dropColumn('user_id');
+        // $table->dropForeign('lists_user_id_foreign');
+        // $table->dropIndex('lists_user_id_index');
+        // $table->dropColumn('user_id');
    
         Schema::dropIfExists('lists');
     }

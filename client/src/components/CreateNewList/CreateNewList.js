@@ -1,48 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import styled from "styled-components";
-
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContentText from "@material-ui/core/DialogContentText";
+import {
+  Button,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  Grid,
+  Typography
+} from "@material-ui/core";
 
 import useApi from "../../hooks/useApi";
+import ListsContext from "../../contexts/ListsContext";
+
+const INITIAL_COLORS = ["#f44336", "#e91e63", "#9c27b0", "#1e88e5", "#009688"];
 
 const CreateNewList = ({ isOpen, toggleOpen }) => {
   const [title, setTitle] = useState("");
-  const [initialColor, setInitialColor] = useState("#000");
-  const [colors, setColors] = useState(["#000", "#888", "#ff0", "#f00"]);
+  const [initialColor, setInitialColor] = useState("#f44336");
+  const { addNewLists } = useContext(ListsContext);
 
   const api = useApi();
 
-  // - Add Loader
-
-  const createNewList = async () => {
-    try {
-      const response = await api.post(`lists`, {
-        title,
-        color: initialColor,
-        user_id: 1
-      });
-
-      console.log(response);
-
-      if (response.status === 200) {
-        // - Push value inside List Context
-        toggleOpen();
-      }
-    } catch (error) {
-      console.log({ error });
-    } finally {
-      toggleOpen();
-    }
+  const createNewList = () => {
+    const list = {
+      title,
+      color: initialColor,
+      user_id: 1
+    };
+    addNewLists(list);
   };
 
   const setNewColor = color => {
-    console.log({ color });
     if (color !== initialColor) setInitialColor(color);
   };
 
@@ -52,43 +43,61 @@ const CreateNewList = ({ isOpen, toggleOpen }) => {
       onClose={toggleOpen}
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle id="form-dialog-title">New To-do List</DialogTitle>
+      <DialogTitle id="form-dialog-title">New Task</DialogTitle>
+
+      <Divider />
 
       <DialogContent>
-        <DialogContentText>
-          You need to create new list everytime you want to save to-do on a new
-          list.
-        </DialogContentText>
+        <VerticalSpacer />
 
-        <TextField
-          autoFocus
-          id="name"
-          label="What should be the name of to do"
-          type="text"
-          fullWidth
-          onChange={callback => {
-            setTitle(callback.target.value);
-          }}
-        />
-        <Colors>
-          {(() => {
-            return colors.map(color => {
-              return (
-                <Color
-                  key={color}
-                  color={color}
-                  active={color === initialColor ? true : false}
-                  onClick={() => setNewColor(color)}
-                />
-              );
-            });
-          })()}
-        </Colors>
+        <Grid container direction="column">
+          <TextField
+            autoFocus
+            id="name"
+            label="Give task a name"
+            placeholder="Eg - Work, Personal, Reading etc."
+            type="text"
+            fullWidth
+            onChange={callback => {
+              setTitle(callback.target.value);
+            }}
+            style={{
+              width: 450
+            }}
+          />
+
+          <VerticalSpacer />
+
+          <Grid container justify="flex-start" alignItems="center">
+            <Typography variant="h6">Assign a color - </Typography>
+
+            {(() => {
+              return INITIAL_COLORS.map(color => {
+                return (
+                  <Color
+                    key={color}
+                    color={color}
+                    active={color === initialColor ? true : false}
+                    onClick={() => setNewColor(color)}
+                  />
+                );
+              });
+            })()}
+          </Grid>
+
+          <VerticalSpacer />
+        </Grid>
+
+        <VerticalSpacer />
       </DialogContent>
-
+      <Divider />
       <DialogActions>
-        <Button onClick={createNewList} color="primary">
-          Create
+        <Button
+          onClick={createNewList}
+          color="primary"
+          disabled={title.length === 0}
+        >
+          Create this task
         </Button>
       </DialogActions>
     </Dialog>
@@ -97,26 +106,23 @@ const CreateNewList = ({ isOpen, toggleOpen }) => {
 
 export default CreateNewList;
 
-const Colors = styled.div`
-    width: 100%    
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-`;
-
 const Color = styled.div`
-  height: 20px;
-  width: 20px;
-  background-color: ${props => (props.color ? props.color : "#000")};
+  height: 30px;
+  width: 30px;
+  background-color: ${props => (props.color ? props.color : "#FFF")};
   border-radius: 50%;
-  margin-right: 10px;
+  margin-right: 5px;
+  margin-left: 5px;
   cursor: pointer;
 
   ${props => {
     if (props.active) {
-      return "border: 1px solid blue";
+      return "border: 3px solid #aaa; transform: scale(1.2) !important;";
     }
   }}
+`;
+
+const VerticalSpacer = styled.div`
+  height: 20px;
+  width: 100%;
 `;

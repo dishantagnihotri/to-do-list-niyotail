@@ -1,51 +1,98 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { Grid, List } from "@material-ui/core";
+import ChipInput from "material-ui-chip-input";
 
-import TagsContext from "../../contexts/TagsContext";
-import AddNewTags from "../AddNewTags";
 import Tag from "../../scenes/Tag";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import List from "@material-ui/core/List";
+import useApi from "../../hooks/useApi";
 
-const Tags = props => {
-  const [tags, setTags] = useState([1, 2, 3, 4, 5]);
+const Tags = ({ todos_id, isEditingTodo }) => {
+  const [tags, setTags] = useState([]);
+  const api = useApi();
 
-  const addNewTags = () => {};
+  useEffect(() => {
+    // getAllTagsAssociatedWithToDo();
+  }, [todos_id]);
+
+  useEffect(() => {}, [isEditingTodo]);
+
+  // const getAllTagsAssociatedWithToDo = async () => {
+  //   console.log("fetching tags");
+
+  //   try {
+  //     const response = await api.get(`/todos/${todos_id}/tags`);
+  //     console.log(response);
+
+  //     if (response.status === 200) {
+  //       setTags(response.data.data);
+  //     }
+  //   } catch (error) {
+  //     console.log({ error });
+  //     // toast.error("Unable to update. Try again!");
+  //   }
+  // };
+
+  const handleAddTags = tag => {
+    console.log(tag);
+    // try {
+    // const response = await api.post(`lists`, mappedData);
+
+    // if (response.status === 200) {
+    // if (response.data && response.data.data.length) {
+    // console.log("list", response.data);
+
+    setTags(prevState => prevState.concat(tag));
+
+    // toast.success("New task created.");
+    // }
+    // }
+    // } catch (error) {
+    //   console.log({ error });
+    //   toast.error(error.message);
+
+    //   if (error.data) {
+    //     error.data.forEach(err => {
+    //       // toast.error(err[0]);
+    //     });
+    //   }
+    // } finally {
+    //   // - Disable loader
+    //   console.log("disabled");
+    // }
+  };
+
+  const handleDeleteTags = tag => {
+    setTags(prevState => prevState.filter(state => state !== tag));
+  };
 
   return (
-    <TagsContext.Provider
-      value={{
-        tags,
-        addNewTags: addNewTags
-      }}
-    >
-      <TagsContext.Consumer>
-        {state => (
-          <React.Fragment>
-            <Grid container xs={12}>
-              <Typography variant="h5" gutterBottom>
-                Tags
-              </Typography>
-            </Grid>
-            <Grid container>
-              <StyledList>
-                {(() => {
-                  if (tags && tags.length) {
-                    return tags.map((tag, index) => {
-                      return <Tag key={index} tag={tag} context={state} />;
-                    });
-                  }
+    <React.Fragment>
+      <Grid container>
+        <StyledList>
+          {(() => {
+            if (isEditingTodo) {
+              return (
+                <ChipInput
+                  value={tags}
+                  fullWidth
+                  placeholder="Assign Tags"
+                  onAdd={tag => handleAddTags(tag)}
+                  onDelete={(tag, index) => handleDeleteTags(tag, index)}
+                />
+              );
+            }
 
-                  return "No tags.";
-                })()}
-              </StyledList>
-            </Grid>
-            {/* <AddNewTags context={state} /> */}
-          </React.Fragment>
-        )}
-      </TagsContext.Consumer>
-    </TagsContext.Provider>
+            if (tags && tags.length) {
+              return tags.map((tag, index) => {
+                return <Tag key={index} tag={tag} />;
+              });
+            }
+
+            return;
+          })()}
+        </StyledList>
+      </Grid>
+    </React.Fragment>
   );
 };
 export default Tags;

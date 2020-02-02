@@ -12,7 +12,7 @@ class Lists extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'color', 'user_id'
+        'title', 'color', 'user_id'
     ];
 
 
@@ -25,16 +25,6 @@ class Lists extends Model
     {
     	return $this->belongsTo('App\User');
     }
-
-
-    /**
-     * Get the Tags associated with a list.
-     */
-    public function tags ()
-    {
-        return $this->belongsToMany('App\Tags');
-    }
-
 
     /**
      * Get the Todos associated with a list.

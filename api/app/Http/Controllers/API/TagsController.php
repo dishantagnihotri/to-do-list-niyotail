@@ -18,7 +18,6 @@ class TagsController extends BaseController
     {
         $products = Tags::all();
 
-
         return $this->sendResponse($products->toArray(), 'Products retrieved successfully.');
     }
 
@@ -60,15 +59,14 @@ class TagsController extends BaseController
      */
     public function show($id)
     {
-        $product = Tags::find($id);
+        $tags = Tags::find($id);
 
-
-        if (is_null($product)) {
-            return $this->sendError('Product not found.');
+        if (is_null($tags)) {
+            return $this->sendError('Tags not found.');
         }
 
 
-        return $this->sendResponse($product->toArray(), 'Product retrieved successfully.');
+        return $this->sendResponse($tags->toArray(), 'Tag retrieved successfully.');
     }
 
 

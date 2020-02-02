@@ -16,7 +16,7 @@ class TodoController extends BaseController
      */
     public function index()
     {
-        $products = Todo::all();
+        $products = Todo::with('tags')->get();
 
         return $this->sendResponse($products->toArray(), 'Products retrieved successfully.');
     }
@@ -32,7 +32,6 @@ class TodoController extends BaseController
     {
         $input = $request->all();
 
-
         $validator = Validator::make($input, [
             'title' => 'required',
             'description' => 'required',
@@ -46,11 +45,10 @@ class TodoController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());       
         }
 
+        $todo = Todo::create($input);
+        $todo->save();
 
-        $product = Todo::create($input);
-
-
-        return $this->sendResponse($product->toArray(), 'Product created successfully.');
+        return $this->sendResponse($todo->toArray(), 'To do created successfully.');
     }
 
 
@@ -81,13 +79,14 @@ class TodoController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Todo $product)
+    public function update(Request $request, Todo $todo)
     {
         $input = $request->all();
 
         $validator = Validator::make($input, [
             'title' => 'required',
-            'lists_id' => 'required'
+            'lists_id' => 'required',
+            'isDone' => 'required'
         ]);
 
 
@@ -96,14 +95,14 @@ class TodoController extends BaseController
         }
 
 
-        $product->title = $input['title'];
-        $product->description = $input['description'];
-        $product->isDone = $input['isDone'];
-        $product->lists_id = $input['lists_id'];
-        $product->update();
+        $todo->title = $input['title'];
+        // $todo->description = $input['description'];
+        $todo->isDone = $input['isDone'];
+        $todo->lists_id = $input['lists_id'];
+        $todo->update();
 
 
-        return $this->sendResponse($product->toArray(), 'Product updated successfully.');
+        return $this->sendResponse($todo->toArray(), 'To Do updated successfully.');
     }
 
 
@@ -113,11 +112,28 @@ class TodoController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Todo $product)
+    public function destroy(Todo $todo)
     {
-        $product->delete();
+        $todo->delete();
+
+        return $this->sendResponse($todo->toArray(), 'To do deleted successfully.');
+    }
 
 
-        return $this->sendResponse($product->toArray(), 'Product deleted successfully.');
+    /**
+     * Get all the tags.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getAllTags ($id)
+    {
+        $todo = Todo::where('id', $id)->with('tags')->first();
+
+        if (is_null($todo)) {
+            return $this->sendError('Tags not found.');
+        }
+
+        return $this->sendResponse($todo->tags->toArray(), 'Tags retrieved successfully.');
     }
 }

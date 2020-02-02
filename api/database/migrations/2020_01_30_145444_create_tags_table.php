@@ -16,7 +16,8 @@ class CreateTagsTable extends Migration
         Schema::create('tags', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->nullable();
-            $table->string('color')->nullable();
+            $table->integer('todos_id')->unsigned();
+            $table->foreign('todos_id')->references('id')->on('todos');
             $table->timestamps();
      });
     }
@@ -28,6 +29,9 @@ class CreateTagsTable extends Migration
      */
     public function down()
     {
+        // $table->dropForeign('todos_todos_id_foreign');
+        // $table->dropIndex('todos_todos_id_index');
+        // $table->dropColumn('todos_id');
         Schema::dropIfExists('tags');
     }
 }

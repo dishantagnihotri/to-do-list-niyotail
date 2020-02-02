@@ -31,9 +31,9 @@ class CreateTodosTable extends Migration
      */
     public function down()
     {
-        $table->dropForeign('lists_lists_id_foreign');
-        $table->dropIndex('lists_lists_id_index');
-        $table->dropColumn('lists_id');
+        // $table->dropForeign('lists_lists_id_foreign');
+        // $table->dropIndex('lists_lists_id_index');
+        // $table->dropColumn('lists_id');
         Schema::dropIfExists('todos');
     }
 }

@@ -16,9 +16,9 @@ class ListController extends BaseController
      */
     public function index()
     {
-        $products = Lists::with('todos')->get();
+        $lists = Lists::with('todos')->get();
 
-        return $this->sendResponse($products->toArray(), 'Products retrieved successfully.');
+        return $this->sendResponse($lists->toArray(), 'These are your latest updates!');
     }
 
 
@@ -34,20 +34,22 @@ class ListController extends BaseController
 
 
         $validator = Validator::make($input, [
-            'title' => 'required',
-            'user_id' => 'required'
+            'title' => 'string|required|max:255',
+            'user_id' => 'required|integer',
+            'color' => 'nullable|string',
+            'tags' => 'nullable'
         ]);
 
 
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return $this->sendError('One of the input is wrong.', $validator->errors());       
         }
 
 
-        $product = Lists::create($input);
+        $list = Lists::create($input);
 
 
-        return $this->sendResponse($product->toArray(), 'Product created successfully.');
+        return $this->sendResponse($list->toArray(), 'New task created!');
     }
 
 
@@ -59,15 +61,15 @@ class ListController extends BaseController
      */
     public function show($id)
     {
-        $product = Lists::find($id);
+        $list = Lists::find($id);
 
 
-        if (is_null($product)) {
+        if (is_null($list)) {
             return $this->sendError('Product not found.');
         }
 
 
-        return $this->sendResponse($product->toArray(), 'Product retrieved successfully.');
+        return $this->sendResponse($list->toArray(), 'Product retrieved successfully.');
     }
 
 
@@ -78,14 +80,15 @@ class ListController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Lists $product)
+    public function update(Request $request, Lists $list)
     {
         $input = $request->all();
 
 
         $validator = Validator::make($input, [
-            'name' => 'required',
-            'detail' => 'required'
+            'title' => 'required',
+            'user_id' => 'required',
+            'color' => 'required'
         ]);
 
 
@@ -94,12 +97,12 @@ class ListController extends BaseController
         }
 
 
-        $product->name = $input['name'];
-        $product->detail = $input['detail'];
-        $product->save();
+        $list->title = $input['title'];
+        $list->color = $input['color'];
+        $list->save();
 
 
-        return $this->sendResponse($product->toArray(), 'Product updated successfully.');
+        return $this->sendResponse($list->toArray(), 'List updated successfully.');
     }
 
 
@@ -109,11 +112,10 @@ class ListController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Lists $product)
+    public function destroy(Lists $list)
     {
-        $product->delete();
+        $list->delete();
 
-
-        return $this->sendResponse($product->toArray(), 'Product deleted successfully.');
+        return $this->sendResponse($list->toArray(), 'Task deleted successfully.');
     }
 }

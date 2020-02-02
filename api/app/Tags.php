@@ -12,15 +12,15 @@ class Tags extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'color'
+        'name', 'todos_id'
     ];
 
 
     /**
      * Get the List associated with a tag.
      */
-    public function lists ()
+    public function todos ()
     {
-        return $this->belongsToMany('App\Lists');
+        return $this->belongsToOne('App\Todo');
     }
 }

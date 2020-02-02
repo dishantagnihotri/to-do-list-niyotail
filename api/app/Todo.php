@@ -22,4 +22,14 @@ class Todo extends Model
     {
         return $this->hasOne('App\Lists');
     }
+
+    /**
+     * Get the Tags associated with a todo.
+     */
+    public function tags ()
+    {
+        return $this->hasMany('App\Tags');
+    }
+
+
 }
