@@ -38,8 +38,6 @@ const Lists = () => {
         toast.success("These are your latest updates.");
       }
     } catch (error) {
-      console.log({ error });
-
       toast.error("Unable to fetch updates. Please login again.");
     } finally {
       setIsListsLoading(false);
@@ -57,7 +55,6 @@ const Lists = () => {
         toast.success("New task created.");
       }
     } catch (error) {
-      console.log({ error });
       toast.error(error.message);
 
       if (error.data) {
@@ -81,7 +78,6 @@ const Lists = () => {
         toast.warn("Task Deleted");
       }
     } catch (error) {
-      console.log({ error });
       toast.error(error.message);
 
       if (error.data) {
@@ -95,7 +91,7 @@ const Lists = () => {
   };
 
   const updateLists = value => {
-    console.log("updating", value);
+    // - Add update list functionality.
   };
 
   const addNewTodos = async todo => {
@@ -121,7 +117,6 @@ const Lists = () => {
         toast.success("To do added!");
       }
     } catch (error) {
-      console.log({ error });
       toast.error(error.message);
 
       if (error.data) {
@@ -153,7 +148,7 @@ const Lists = () => {
         toast.warn("To-do removed from task.");
       }
     } catch (error) {
-      console.log({ error });
+      toast.error("We are unable to remove this task.");
     }
   };
 
@@ -188,7 +183,6 @@ const Lists = () => {
         toast.success("To Do updated successfully.");
       }
     } catch (error) {
-      console.log({ error });
       toast.error("Unable to update. Try again!");
     }
   };
